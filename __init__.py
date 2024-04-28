@@ -1,8 +1,6 @@
 import bpy
-import bpy.ops as bop
-from bpy.props import IntProperty, FloatProperty # type: ignore
+from bpy.props import IntProperty, FloatProperty  # type: ignore
 import bmesh
-
 
 bl_info = {
     "name": "Knife EX",
@@ -15,64 +13,29 @@ bl_info = {
 }
 
 
-class ModalOperator(bpy.types.Operator):
-    """Move an object with the mouse, example"""
 
-    bl_idname = "object.modal_operator"
-    bl_label = "Simple Modal Operator"
+class TestPanel(bpy.types.Panel):
+    bl_label = "Test Panel"
+    bl_idname = "PT_Test_Panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Test Panel Tab"
 
-    first_mouse_x: IntProperty() # type: ignore
-    first_value: FloatProperty() # type: ignore
+    def draw(self, context):
+        layout = self.layout
 
-    def modal(self, context, event):
-        if event.type == "MOUSEMOVE":
-            delta = self.first_mouse_x - event.mouse_x
-            context.object.location.x = self.first_value + delta * 0.01
-
-        elif event.type == "LEFTMOUSE":
-            return {"FINISHED"}
-
-        elif event.type in {"RIGHTMOUSE", "ESC"}:
-            context.object.location.x = self.first_value
-            return {"CANCELLED"}
-
-        return {"RUNNING_MODAL"}
-
-    def invoke(self, context, event):
-        if context.object:
-            self.first_mouse_x = event.mouse_x
-            self.first_value = context.object.location.x
-
-            context.window_manager.modal_handler_add(self)
-            return {"RUNNING_MODAL"}
-        else:
-            self.report({"WARNING"}, "No active object, could not finish")
-            return {"CANCELLED"}
-
-
-def menu_func(self, context):
-    self.layout.operator(ModalOperator.bl_idname, text=ModalOperator.bl_label)
+        row = layout.row()
+        row.label(text="Sample Text", icon="cube")
 
 
 def register():
-    bpy.utils.register_class(ModalOperator)
     print("Hello World")
-
-
-key_config = bpy.context.window_manager.keyconfigs.addon
-if key_config:
-    key_map = key_config.keymaps.new(name="3D View", space_type="VIEW_3D")
-    key_entry = key_map.keymap_items.new(
-        "object.modal_operator",
-        type="Q",
-        value="PRESS",
-        shift=True,
-    )
-    mode_keymap = (key_map, key_entry)
+    bpy.utils.register_class(TestPanel)
 
 
 def unregister():
     print("Goodbye World")
+    bpy.utils.unregister_class(TestPanel)
 
 
 if __name__ == "__main__":
