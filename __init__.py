@@ -1,7 +1,7 @@
+
 import bpy
-from bpy.props import IntProperty, FloatProperty  # type: ignore
-import bmesh
-import gpu
+# from bpy.props import IntProperty # type: ignore
+
 
 
 bl_info = {
@@ -58,6 +58,29 @@ class GizmoTest(bpy.types.Gizmo):
 
     def draw(self, context):
         pass
+    
+class WM_OT_myop(bpy.types.Operator):
+    bl_idname="wm.myop"
+    bl_label="Add a Cube Dialog Box"
+    
+    text = bpy.props.StringProperty(name= "Enter Text", default= "")  # noqa: F811
+    number_scale = bpy.props.FloatProperty(name= "scale Z Axis", default= 1)
+    
+    
+    def execute(self, context):
+        
+        
+        t = self.text
+        
+        bpy.ops.mesh.primitive_cube_add()
+        obj = bpy.context.object
+        obj.name = t
+        
+        return {'FINISHED'}
+    
+    def invoke(self, context, event):
+        
+        return context.window_manager.invoke_props_dialog(self)
 
 
 def register():
@@ -65,6 +88,7 @@ def register():
     bpy.utils.register_class(TestPanel)
     bpy.utils.register_class(TestPanelB)
     bpy.utils.register_class(GizmoTest)
+    bpy.utils.register_class(WM_OT_myop)
 
 
 def unregister():
@@ -72,7 +96,10 @@ def unregister():
     bpy.utils.unregister_class(TestPanel)
     bpy.utils.unregister_class(TestPanelB)
     bpy.utils.unregister_class(GizmoTest)
+    bpy.utils.unregister_class(WM_OT_myop)
 
 
 if __name__ == "__main__":
     register()
+    
+    bpy.ops.wm.myop('INVOKE_DEFAULT')
