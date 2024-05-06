@@ -1,5 +1,6 @@
 
 import bpy
+
 # from bpy.props import IntProperty # type: ignore
 
 
@@ -63,24 +64,28 @@ class WM_OT_myop(bpy.types.Operator):
     bl_idname="wm.myop"
     bl_label="Add a Cube Dialog Box"
     
-    text = bpy.props.StringProperty(name= "Enter Text", default= "")  # noqa: F811
-    number_scale = bpy.props.FloatProperty(name= "scale Z Axis", default= 1)
+    text:  bpy.props.StringProperty(name= "Enter Text", default= "")  # type: ignore # noqa: F811
+    scale: bpy.props.FloatVectorProperty(name= "scale Axis", default= (1,1,1)) # type: ignore
+    
     
     
     def execute(self, context):
         
-        
-        t = self.text
-        
         bpy.ops.mesh.primitive_cube_add()
         obj = bpy.context.object
-        obj.name = t
-        
+        obj.name = self.text
+        obj.scale[0] = self.scale[0]
+        obj.scale[1] = self.scale[1]
+        obj.scale[2] = self.scale[2]
+
         return {'FINISHED'}
     
     def invoke(self, context, event):
         
         return context.window_manager.invoke_props_dialog(self)
+    
+    
+    
 
 
 def register():
