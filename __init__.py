@@ -3,7 +3,7 @@ import bpy
 
 # from bpy.props import IntProperty # type: ignore
 
-
+bpycon = bpy.context
 
 bl_info = {
     "name": "Knife EX",
@@ -85,7 +85,29 @@ class WM_OT_myop(bpy.types.Operator):
         return context.window_manager.invoke_props_dialog(self)
     
     
+class WM_OT_Bounds_Toggle(bpy.types.Operator):
+    bl_idname = "wm.bound_toggle"
+    bl_label = "Toogle Bound View of the Active Object"
     
+    boundbool: bpy.props.BoolProperty(name="Boundry Toogle", default=False)  # type: ignore
+
+    
+    def execute(self, context):
+        
+        bpy.context.active_object.show_bounds = self.boundbool
+        
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        
+        return context.window_manager.invoke_props_dialog(self)
+
+
+def menu_fucn(self, context):
+    self.layout.operator(WM_OT_myop.bl_idname)  
+    
+def new_bound_func(self, context):
+    self.layout.operator(WM_OT_Bounds_Toggle.bl_idname)
 
 
 def register():
@@ -94,6 +116,9 @@ def register():
     bpy.utils.register_class(TestPanelB)
     bpy.utils.register_class(GizmoTest)
     bpy.utils.register_class(WM_OT_myop)
+    bpy.utils.register_class(WM_OT_Bounds_Toggle)
+    bpy.types.VIEW3D_MT_object.append(menu_fucn)
+    bpy.types.VIEW3D_MT_object.append(new_bound_func)
 
 
 def unregister():
@@ -102,6 +127,9 @@ def unregister():
     bpy.utils.unregister_class(TestPanelB)
     bpy.utils.unregister_class(GizmoTest)
     bpy.utils.unregister_class(WM_OT_myop)
+    bpy.utils.unregister_class(WM_OT_Bounds_Toggle)
+    bpy.types.VIEW3D_MT_object.remove(menu_fucn)
+    bpy.types.VIEW3D_MT_object.remove(new_bound_func)
 
 
 if __name__ == "__main__":
