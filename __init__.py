@@ -101,6 +101,15 @@ class WM_OT_Bounds_Toggle(bpy.types.Operator):
     def invoke(self, context, event):
         
         return context.window_manager.invoke_props_dialog(self)
+    
+    
+class WM_BMesh_Test(bpy.types.Operator):
+    bl_idname = "wm.bmesh_test"
+    bl_label = "Trying out the bmesh module"
+    
+    def execute(self, context):
+        
+        pass
 
 
 def menu_fucn(self, context):
