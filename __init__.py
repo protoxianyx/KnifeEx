@@ -57,6 +57,8 @@ class GizmoTest(bpy.types.Gizmo):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
 
+    
+
     def draw(self, context):
         pass
     
@@ -89,12 +91,17 @@ class WM_OT_Bounds_Toggle(bpy.types.Operator):
     bl_idname = "wm.bound_toggle"
     bl_label = "Toogle Bound View of the Active Object"
     
+    
+    mode_options = ('EDIT', 'OBJECT')
+    
     boundbool: bpy.props.BoolProperty(name="Boundry Toogle", default=False)  # type: ignore
+
 
     
     def execute(self, context):
         
         bpy.context.active_object.show_bounds = self.boundbool
+        bpy.ops.object.mode_set(mode='EDIT', toggle=True)
         
         return {"FINISHED"}
 
@@ -107,9 +114,26 @@ class WM_BMesh_Test(bpy.types.Operator):
     bl_idname = "wm.bmesh_test"
     bl_label = "Trying out the bmesh module"
     
+    def subdiv_edit_toogle(self, context):
+        bpy.context.active_object.modifiers['Subdivision']
+    
     def execute(self, context):
+        bpy.ops.object.shade_flat()
+    
+
+class WM_ShadeSmooth_Toogle(bpy.types.Operator):
+    bl_idname = "wm.shadesmooth_toogle"
+    
+    def execute(self, context):
+        newobjmodiferdata = bpycon.modifiers.keys()
         
-        pass
+        for i in range(len(newobjmodiferdata)):
+            if(bpycon.active_object.modifiers[i].type == 'SUBSURF'):
+                pass
+            
+            
+        
+        
 
 
 def menu_fucn(self, context):
@@ -127,7 +151,8 @@ def register():
     bpy.utils.register_class(WM_OT_myop)
     bpy.utils.register_class(WM_OT_Bounds_Toggle)
     bpy.types.VIEW3D_MT_object.append(menu_fucn)
-    bpy.types.VIEW3D_MT_object.append(new_bound_func)
+    bpy.types.VIEW3D_MT_view.append(new_bound_func)
+
 
 
 def unregister():
@@ -138,7 +163,7 @@ def unregister():
     bpy.utils.unregister_class(WM_OT_myop)
     bpy.utils.unregister_class(WM_OT_Bounds_Toggle)
     bpy.types.VIEW3D_MT_object.remove(menu_fucn)
-    bpy.types.VIEW3D_MT_object.remove(new_bound_func)
+    bpy.types.VIEW3D_MT_view.remove(new_bound_func)
 
 
 if __name__ == "__main__":
